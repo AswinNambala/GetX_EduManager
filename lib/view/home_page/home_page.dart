@@ -3,8 +3,9 @@ import 'package:get/get.dart';
 import 'package:student_details_getx/constant/utils.dart';
 import 'package:student_details_getx/controller/class_controller.dart';
 import 'package:student_details_getx/view/add_page.dart';
-import 'package:student_details_getx/view/home_page/header_section.dart';
-import 'package:student_details_getx/view/home_page/list_view_section.dart';
+import 'package:student_details_getx/view/home_page/widget/grid_view_section.dart';
+import 'package:student_details_getx/view/home_page/widget/header_section.dart';
+import 'package:student_details_getx/view/home_page/widget/list_view_section.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,8 +15,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-    final studentsCtrl = Get.put(StudentsController());
-
+  final studentsCtrl = Get.put(StudentsController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,11 +71,17 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       body: Padding(
-        padding:const EdgeInsets.only(top: 30, left: 15, right: 15),
+        padding: const EdgeInsets.only(top: 30, left: 15, right: 15),
         child: Column(
           children: [
-            const HeaderSection(),
-            Expanded(child: ListViewSection(studentsCtrl: studentsCtrl))
+            HeaderSection(),
+            Obx(() {
+              if (studentsCtrl.viewStudents.value) {
+                return Expanded(child: GridViewSection(studentsCtrl: studentsCtrl));
+              } else {
+                return Expanded(child: ListViewSection(studentsCtrl: studentsCtrl));
+              }
+            })
           ],
         ),
       ),

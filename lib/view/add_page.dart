@@ -1,13 +1,11 @@
 import 'dart:developer';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:student_details_getx/constant/utils.dart';
 import 'package:student_details_getx/controller/class_controller.dart';
 import 'package:student_details_getx/models.dart/students_model.dart';
-import 'package:student_details_getx/view/home_page/home_page.dart';
 import 'package:student_details_getx/widgets/forum_feild.dart';
 
 class AddPage extends StatefulWidget {
@@ -62,7 +60,7 @@ class _AddPageState extends State<AddPage> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Container(
-                  height: 100,
+                  height: 110,
                   padding: const EdgeInsets.all(15),
                   width: double.infinity,
                   decoration: BoxDecoration(
@@ -210,8 +208,10 @@ class _AddPageState extends State<AddPage> {
                   hint: 'Enter Students Grade',
                   label: 'Students Grade',
                   validator: (value) {
-                    if (value!.isEmpty) {
+                    if (checkClearValidate){
+                      if (value!.isEmpty) {
                       return 'Field is empty';
+                    }
                     }
                     return null;
                   },
@@ -228,12 +228,14 @@ class _AddPageState extends State<AddPage> {
                   hint: 'Enter Students Class Teacher Name',
                   label: 'Class Teacher Name',
                   validator: (value) {
-                    if (value!.isEmpty) {
+                    if (checkClearValidate){
+                      if (value!.isEmpty) {
                       return 'Field is empty';
                     } else if (value.isNotEmpty) {
                       if (value.length < 3) {
                         return 'minimum of 3 letter is neccesary';
                       }
+                    }
                     }
                     return null;
                   },
@@ -250,12 +252,14 @@ class _AddPageState extends State<AddPage> {
                   hint: 'Enter Parents Phone Number',
                   label: 'Phone Number',
                   validator: (value) {
-                    if (value!.isEmpty) {
+                    if (checkClearValidate){
+                      if (value!.isEmpty) {
                       return 'Field is empty';
                     } else if (int.tryParse(value) == null) {
                       return 'Only numbers are accepted';
                     } else if (value.length != 10) {
                       return 'Phone number must be 10 digits';
+                    }
                     }
                     return null;
                   },
@@ -351,6 +355,7 @@ class _AddPageState extends State<AddPage> {
     gradeCtrl.clear();
     teacherCtrl.clear();
     parentPhoneNumberCtrl.clear();
+    imagefile = null;
   }
 
   Future<void> pickImage({bool resize = false}) async {

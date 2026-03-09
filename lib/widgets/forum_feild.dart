@@ -50,14 +50,11 @@ class AllTextFormField extends StatelessWidget {
             readOnly: readOnly,
             onTap: onTap,
             onChanged: onChange,
+            
             decoration: InputDecoration(
               labelText: label,
+              prefixIcon: preffixIcon,
               hintText: hint,
-              hintStyle: Theme.of(context)
-                  .textTheme
-                  .bodyLarge!
-                  .copyWith(color: Colors.white.withOpacity(0.4)),
-                  prefixIcon: preffixIcon,
               filled: true,
               fillColor: Colors.white,
               contentPadding:

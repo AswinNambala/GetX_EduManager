@@ -1,0 +1,275 @@
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:student_details_getx/constant/utils.dart';
+import 'package:student_details_getx/controller/class_controller.dart';
+import 'package:student_details_getx/models.dart/students_model.dart';
+import 'package:student_details_getx/view/home_page/home_page.dart';
+import 'package:student_details_getx/widgets/forum_feild.dart';
+
+class EditStudentsProfile extends StatefulWidget {
+  final int index;
+
+  const EditStudentsProfile({super.key, required this.index});
+
+  @override
+  State<EditStudentsProfile> createState() => _EditStudentsProfileState();
+}
+
+class _EditStudentsProfileState extends State<EditStudentsProfile> {
+  final StudentsController controller = Get.find();
+
+  final TextEditingController nameCtrl = TextEditingController();
+  final TextEditingController idCtrl = TextEditingController();
+  final TextEditingController teacherCtrl = TextEditingController();
+  final TextEditingController gradeCtrl = TextEditingController();
+  final TextEditingController parentPhoneNumberCtrl = TextEditingController();
+
+  File? imagefile;
+  StudentsClass? student;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  void fetchData() {
+    student = controller.fetchData(widget.index);
+    nameCtrl.text = student!.studentsName ?? '';
+    idCtrl.text = student!.studentsId ?? '';
+    teacherCtrl.text = student!.studentsTeacherName ?? '';
+    gradeCtrl.text = student!.studentsGrade ?? '';
+    parentPhoneNumberCtrl.text = student!.parentPhoneNumber?.toString() ?? '';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    return Scaffold(
+      backgroundColor: backgroundColor,
+      appBar: AppBar(
+        backgroundColor: backgroundColor,
+        title: const Text('Edit Student Profile'),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            GestureDetector(
+              onTap: pickImage,
+              child: buildProfileImage(),
+            ),
+            const SizedBox(height: 30),
+            AllTextFormField(
+              controller: nameCtrl,
+              preffixIcon: const Icon(
+                Icons.person,
+                size: 20,
+              ),
+              hint: 'Enter Students Name',
+              label: 'Students Name',
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Field is empty';
+                } else if (value.isNotEmpty) {
+                  if (value.length < 3) {
+                    return 'minimum of 3 letter is neccesary';
+                  }
+                }
+
+                return null;
+              },
+            ),
+            const SizedBox(height: 15),
+            AllTextFormField(
+              controller: idCtrl,
+              preffixIcon: const Icon(
+                Icons.contact_mail_sharp,
+                size: 20,
+              ),
+              hint: 'STU-2026-15',
+              label: 'Students ID Number',
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Field is empty';
+                } else if (value.length < 9) {
+                  return 'Students ID length should be more than 9 character';
+                }
+
+                return null;
+              },
+            ),
+            const SizedBox(height: 15),
+            AllTextFormField(
+              controller: gradeCtrl,
+              preffixIcon: const Icon(
+                Icons.school,
+                size: 20,
+              ),
+              hint: 'Enter Students Grade',
+              label: 'Students Grade',
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Field is empty';
+                }
+
+                return null;
+              },
+            ),
+            const SizedBox(height: 15),
+            AllTextFormField(
+              controller: teacherCtrl,
+              preffixIcon: const Icon(
+                Icons.person,
+                size: 20,
+              ),
+              hint: 'Enter Students Class Teacher Name',
+              label: 'Class Teacher Name',
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Field is empty';
+                } else if (value.isNotEmpty) {
+                  if (value.length < 3) {
+                    return 'minimum of 3 letter is neccesary';
+                  }
+                }
+
+                return null;
+              },
+            ),
+            const SizedBox(height: 15),
+            AllTextFormField(
+              controller: parentPhoneNumberCtrl,
+              preffixIcon: const Icon(
+                Icons.phone,
+                size: 20,
+              ),
+              hint: 'Enter Parents Phone Number',
+              label: 'Phone Number',
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Field is empty';
+                } else if (int.tryParse(value) == null) {
+                  return 'Only numbers are accepted';
+                } else if (value.length != 10) {
+                  return 'Phone number must be 10 digits';
+                }
+
+                return null;
+              },
+              keyboardType: TextInputType.number,
+            ),
+            const SizedBox(height: 30),
+            SizedBox(
+              width: screenWidth,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue[700],
+                  fixedSize: const Size(150, 60),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                onPressed: updateStudent,
+                child: const Text('Update Student',
+                    style: TextStyle(color: Colors.white, fontSize: 25)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> pickImage() async {
+    final pickedImage =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+
+    if (pickedImage != null) {
+      setState(() {
+        imagefile = File(pickedImage.path);
+      });
+    }
+  }
+
+  Future<void> updateStudent() async {
+    final updatedStudent = StudentsClass(
+      studentsName: nameCtrl.text,
+      studentsId: idCtrl.text,
+      studentsTeacherName: teacherCtrl.text,
+      studentsGrade: gradeCtrl.text,
+      parentPhoneNumber: int.tryParse(parentPhoneNumberCtrl.text),
+      image:
+          imagefile != null ? await imagefile!.readAsBytes() : student?.image,
+    );
+    controller.updateStudentsDetails(widget.index, updatedStudent);
+    Get.off(const HomePage());
+    Get.snackbar(
+        'Profile Updated', "The student details were updated successfully.");
+  }
+
+  Widget buildProfileImage() {
+    if (imagefile != null) {
+      return Container(
+        height: 190,
+        width: 190,
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 4,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: CircleAvatar(
+          radius: 75,
+          backgroundImage: FileImage(imagefile!),
+        ),
+      );
+    } else if (student?.image != null) {
+      return Container(
+        height: 190,
+        width: 190,
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 4,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: CircleAvatar(
+          radius: 75,
+          backgroundImage: MemoryImage(student!.image!),
+        ),
+      );
+    } else {
+      return Container(
+        height: 150,
+        width: 150,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.black),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 4,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: const Icon(
+          Icons.person,
+          size: 70,
+        ),
+      );
+    }
+  }
+}

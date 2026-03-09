@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:student_details_getx/constant/utils.dart';
+import 'package:student_details_getx/controller/class_controller.dart';
+import 'package:student_details_getx/widgets/forum_feild.dart';
 
 class HeaderSection extends StatelessWidget {
-  const HeaderSection({super.key});
-
+  HeaderSection({super.key});
+  final viewCtrl = Get.put(StudentsController());
+  final TextEditingController searchCtrl = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -11,38 +15,13 @@ class HeaderSection extends StatelessWidget {
       height: 170,
       child: Column(
         children: [
-          Container(
-            width: double.infinity,
-            height: 60,
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: Colors.white, width: 0.5),
-              color: Colors.white,
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 4,
-                  offset: Offset(0, 2),
-                ),
-              ],
-            ),
-            child: const Row(
-              children: [
-                Icon(
-                  Icons.search,
-                  size: 25,
-                  color: Colors.grey,
-                ),
-                SizedBox(
-                  width: 15,
-                ),
-                Text(
-                  'Search students by name, ID . . . .',
-                  style: TextStyle(color: Colors.black54, fontSize: 18),
-                ),
-              ],
-            ),
+          AllTextFormField(
+            controller: searchCtrl,
+            onChange: (value) {
+              viewCtrl.searchStudents(searchCtrl.text);
+            },
+            label: 'Search by name, id . . . .',
+            preffixIcon:const Icon(Icons.search),
           ),
           const SizedBox(
             height: 15,
@@ -52,7 +31,7 @@ class HeaderSection extends StatelessWidget {
             children: [
               InkWell(
                 onTap: () {
-                  
+                  viewCtrl.viewStudents.value = false;
                 },
                 child: Container(
                   height: 60,
@@ -92,7 +71,9 @@ class HeaderSection extends StatelessWidget {
                 width: 15,
               ),
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  viewCtrl.viewStudents.value = true;
+                },
                 child: Container(
                   height: 60,
                   width: 100,
