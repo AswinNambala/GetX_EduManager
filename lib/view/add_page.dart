@@ -208,10 +208,10 @@ class _AddPageState extends State<AddPage> {
                   hint: 'Enter Students Grade',
                   label: 'Students Grade',
                   validator: (value) {
-                    if (checkClearValidate){
+                    if (checkClearValidate) {
                       if (value!.isEmpty) {
-                      return 'Field is empty';
-                    }
+                        return 'Field is empty';
+                      }
                     }
                     return null;
                   },
@@ -228,14 +228,14 @@ class _AddPageState extends State<AddPage> {
                   hint: 'Enter Students Class Teacher Name',
                   label: 'Class Teacher Name',
                   validator: (value) {
-                    if (checkClearValidate){
+                    if (checkClearValidate) {
                       if (value!.isEmpty) {
-                      return 'Field is empty';
-                    } else if (value.isNotEmpty) {
-                      if (value.length < 3) {
-                        return 'minimum of 3 letter is neccesary';
+                        return 'Field is empty';
+                      } else if (value.isNotEmpty) {
+                        if (value.length < 3) {
+                          return 'minimum of 3 letter is neccesary';
+                        }
                       }
-                    }
                     }
                     return null;
                   },
@@ -252,14 +252,14 @@ class _AddPageState extends State<AddPage> {
                   hint: 'Enter Parents Phone Number',
                   label: 'Phone Number',
                   validator: (value) {
-                    if (checkClearValidate){
+                    if (checkClearValidate) {
                       if (value!.isEmpty) {
-                      return 'Field is empty';
-                    } else if (int.tryParse(value) == null) {
-                      return 'Only numbers are accepted';
-                    } else if (value.length != 10) {
-                      return 'Phone number must be 10 digits';
-                    }
+                        return 'Field is empty';
+                      } else if (int.tryParse(value) == null) {
+                        return 'Only numbers are accepted';
+                      } else if (value.length != 10) {
+                        return 'Phone number must be 10 digits';
+                      }
                     }
                     return null;
                   },
@@ -332,6 +332,14 @@ class _AddPageState extends State<AddPage> {
   }
 
   void savedStudentsDetails() async {
+    if (nameCtrl.text.isEmpty ||
+        idCtrl.text.isEmpty ||
+        gradeCtrl.text.isEmpty ||
+        teacherCtrl.text.isEmpty ||
+        parentPhoneNumberCtrl.text.isEmpty) {
+      Get.snackbar('Fill all felid', 'Recheck any felid is empty');
+      return;
+    }
     var student = StudentsClass(
       studentsName: nameCtrl.text,
       studentsId: idCtrl.text,
@@ -378,5 +386,15 @@ class _AddPageState extends State<AddPage> {
     } catch (e) {
       log('Error picking image: $e');
     }
+  }
+  @override
+  void dispose() {
+    super.dispose();
+    nameCtrl.dispose();
+    idCtrl.dispose();
+    gradeCtrl.dispose();
+    parentPhoneNumberCtrl.dispose();
+    teacherCtrl.dispose();
+    imagefile = null;
   }
 }

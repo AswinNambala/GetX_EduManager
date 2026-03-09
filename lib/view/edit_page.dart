@@ -178,6 +178,24 @@ class _EditStudentsProfileState extends State<EditStudentsProfile> {
                     style: TextStyle(color: Colors.white, fontSize: 25)),
               ),
             ),
+            const SizedBox(height: 10,),
+            SizedBox(
+              width: screenWidth,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  fixedSize: const Size(150, 60),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Cancel',
+                    style: TextStyle(color: Colors.black, fontSize: 25, fontWeight: FontWeight.bold)),
+              ),
+            ),
           ],
         ),
       ),
@@ -196,6 +214,14 @@ class _EditStudentsProfileState extends State<EditStudentsProfile> {
   }
 
   Future<void> updateStudent() async {
+    if (nameCtrl.text.isEmpty ||
+        idCtrl.text.isEmpty ||
+        gradeCtrl.text.isEmpty ||
+        teacherCtrl.text.isEmpty ||
+        parentPhoneNumberCtrl.text.isEmpty) {
+      Get.snackbar('Fill all felid', 'Recheck any felid is empty');
+      return;
+    }
     final updatedStudent = StudentsClass(
       studentsName: nameCtrl.text,
       studentsId: idCtrl.text,
@@ -271,5 +297,15 @@ class _EditStudentsProfileState extends State<EditStudentsProfile> {
         ),
       );
     }
+  }
+  @override
+  void dispose() {
+    super.dispose();
+    nameCtrl.dispose();
+    idCtrl.dispose();
+    gradeCtrl.dispose();
+    parentPhoneNumberCtrl.dispose();
+    teacherCtrl.dispose();
+    imagefile = null;
   }
 }

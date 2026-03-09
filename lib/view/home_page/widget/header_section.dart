@@ -4,10 +4,22 @@ import 'package:student_details_getx/constant/utils.dart';
 import 'package:student_details_getx/controller/class_controller.dart';
 import 'package:student_details_getx/widgets/forum_feild.dart';
 
-class HeaderSection extends StatelessWidget {
-  HeaderSection({super.key});
+class HeaderSection extends StatefulWidget {
+  const HeaderSection({super.key});
+
+  @override
+  State<HeaderSection> createState() => _HeaderSectionState();
+}
+
+class _HeaderSectionState extends State<HeaderSection> {
   final viewCtrl = Get.put(StudentsController());
   final TextEditingController searchCtrl = TextEditingController();
+  @override
+  void dispose() {
+    searchCtrl.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -21,7 +33,7 @@ class HeaderSection extends StatelessWidget {
               viewCtrl.searchStudents(searchCtrl.text);
             },
             label: 'Search by name, id . . . .',
-            preffixIcon:const Icon(Icons.search),
+            preffixIcon: const Icon(Icons.search),
           ),
           const SizedBox(
             height: 15,
